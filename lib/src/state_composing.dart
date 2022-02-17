@@ -1,5 +1,3 @@
-import 'dart:html';
-
 ///To create a state machine just instanciate this class passing the [id]
 ///and the [states] that it will have, you also need to set
 ///what state will be the [initial] one
@@ -44,7 +42,7 @@ class StateMachine {
   transitionTo(State next_state) async {
     //check if transition is valid
     if (!_currentState!.transitions.contains(next_state)) {
-      throw ErrorEvent(
+      throw Exception(
           """Invalid transition from ${currentState!.id} to ${next_state.id}
       The state ${currentState!.id} can only transition to:
       ${_currentState!.transitions}
