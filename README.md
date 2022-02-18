@@ -2,8 +2,8 @@
 >Create state machines in dart using object composition
 >For now only suports simple transitions between states. Next steps are add listeners and parallel states
 
-## Usage
-###Creating a machine with to states A and B
+# Usage
+##Creating a machine with to states A and B
 ``` dart
 StateMachine machine = StateMachine(
           id: "machine1",
@@ -37,8 +37,8 @@ StateMachine machine = StateMachine(
             )
           ],
         );
-'''
-###Transitioning between states
+```
+##Transitioning between states
 ```dart
 print(machine.currentState!.id) //A
 await machine.transitionTo("B");
