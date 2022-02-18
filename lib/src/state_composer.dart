@@ -1,3 +1,5 @@
+library state_composer.src.state_composer;
+
 ///To create a state machine just instanciate this class passing the [id]
 ///and the [states] that it will have, you also need to set
 ///what state will be the [initial] one
@@ -44,9 +46,9 @@ class StateMachine {
     staterd = true;
   }
 
-  ///This method executes a transition from the [currentState] to the 
+  ///This method executes a transition from the [currentState] to the
   ///[next_state] parameter, but only if the transition is valid i.e. if the
-  ///[currentState] have [nextState] in its transitions list 
+  ///[currentState] have [nextState] in its transitions list
   Future<void> transitionTo(State nextState) async {
     //check if transition is valid
     if (!_currentState!.transitions.contains(nextState)) {

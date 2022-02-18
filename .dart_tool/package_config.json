@@ -1,0 +1,14 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "state_composer",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    }
+  ],
+  "generated": "2022-02-18T19:56:32.173615Z",
+  "generator": "pub",
+  "generatorVersion": "2.16.1"
+}
