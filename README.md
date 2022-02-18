@@ -3,7 +3,12 @@
 >This package is under development. For now only suports simple transitions between states. Next steps are add listeners and parallel states
 
 ## Usage
-### Creating a machine with to states: A and B, with a transition from A to B, and form B back to A
+### A simple machine with to states
+Instanciate your `StateMachine` passing its id, i.e. a unique name, the inintial state id and a list of states <br>
+Each `State` also have an id that really can be whatever you want to call it, as long as there is no other state with this name <br>
+States execute stuff through `onEnter` and `onLeave` functions. Ps: those functions accept futures<br>
+All transitions that a State is allowed to make must be inside the transitions list. A `Transition` also receives an id, 
+and the id of the state that you want to go to
 ``` dart
 StateMachine machine = StateMachine(
           id: "machine1",
