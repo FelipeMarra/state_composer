@@ -24,10 +24,6 @@ class StateMachine {
   State? _currentState;
   State? get currentState => _currentState;
 
-  ///True if the machine started i.e. already executed initial states' onEnter
-  ///method
-  bool staterd = false;
-
   //TODO listen to state changes via status class => will also deliver [starded]
 
   StateMachine({
@@ -49,7 +45,6 @@ class StateMachine {
     }
     _lastState = _currentState;
     await _currentState?.onEnter();
-    staterd = true;
   }
 
   ///This method executes a transition from the [currentState] to the
@@ -81,7 +76,7 @@ class StateMachine {
     _lastState = _currentState;
     _currentState = nextState;
 
-    //enter sate
+    //enter next sate
     await nextState.onEnter();
   }
 }
