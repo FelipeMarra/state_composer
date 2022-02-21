@@ -44,7 +44,7 @@ class StateMachine {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
     }
     _lastState = _currentState;
-    await _currentState?.onEnter();
+    await _currentState?.onEnter!();
   }
 
   ///This method executes a transition from the [currentState] to the
@@ -70,14 +70,14 @@ class StateMachine {
     }
 
     //leave last state
-    await _lastState?.onLeave();
+    await _lastState?.onLeave!();
 
     //Update last and current sates
     _lastState = _currentState;
     _currentState = nextState;
 
     //enter next sate
-    await nextState.onEnter();
+    await nextState.onEnter!();
   }
 }
 
@@ -92,16 +92,16 @@ class StateMachine {
 ///
 class ComposerState {
   final String id;
-  final Function onEnter;
-  final Function onLeave;
+  final Function? onEnter;
+  final Function? onLeave;
 
   ///The list of [Transition]s that make up this [StateMachine]
   final List<Transition> transitions;
 
   ComposerState({
     required this.id,
-    required this.onEnter,
-    required this.onLeave,
+    this.onEnter,
+    this.onLeave,
     required this.transitions,
   });
 
