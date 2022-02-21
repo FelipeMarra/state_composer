@@ -5,16 +5,16 @@
 ## Usage
 ### A simple machine with to states
 Instanciate your `StateMachine` passing its id, i.e. a unique name, the inintial state id and a list of states <br>
-Each `State` also have an id that really can be whatever you want to call it, as long as there is no other state with this name <br>
+Each `ComposerState` also have an id that can really be whatever you want to call it, as long as there is no other state with this name <br>
 States execute stuff through `onEnter` and `onLeave` functions. Ps: those functions accept futures<br>
-All transitions that a State is allowed to make must be inside the transitions list. A `Transition` also receives an id, 
+All transitions that a state is allowed to make must be inside the transitions list. A `Transition` also receives an id, 
 and the id of the state that you want to go to
 ``` dart
 StateMachine machine = StateMachine(
           id: "machine1",
           initialStateId: "A",
           states: [
-            State(
+            ComposerState(
               id: "A",
               onEnter: () async {
                 print("Entered A");
@@ -28,7 +28,7 @@ StateMachine machine = StateMachine(
                 Transition(id: "A=>B", to: "B"),
               ],
             ),
-            State(
+            ComposerState(
               id: "B",
               onEnter: () {
                 print("Entered B");

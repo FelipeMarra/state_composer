@@ -3,26 +3,26 @@ library state_composer.src.state_composer;
 import 'package:state_composer/src/exceptions.dart';
 
 ///To create a state machine just instanciate this class passing the [id]
-///and the [states] that it will have, you also need to set
+///and the [ComposerState]s that it will have, you also need to set
 ///what state will be the [initial] one
 class StateMachine {
   ///[StateMachine]'s id, a name that identifies the machine
   final String id;
 
-  ///The list of [State]s that make up this [StateMachine]
-  final List<State> states;
+  ///The list of [ComposerState]s that make up this [StateMachine]
+  final List<ComposerState> states;
 
-  ///The [State] that will be automatically activated when the [StateMachine] is
+  ///The [ComposerState] id that will be automatically activated when the [StateMachine] is
   ///instantiated
   final String initialStateId;
 
-  ///The [State] the [StateMachine] was in previously
-  State? _lastState;
-  State? get lastState => _lastState;
+  ///The [ComposerState] the [StateMachine] was in previously
+  ComposerState? _lastState;
+  ComposerState? get lastState => _lastState;
 
-  ///The [State] the [StateMachine] is currently in
-  State? _currentState;
-  State? get currentState => _currentState;
+  ///The [ComposerState] the [StateMachine] is currently in
+  ComposerState? _currentState;
+  ComposerState? get currentState => _currentState;
 
   //TODO listen to state changes via status class => will also deliver [starded]
 
@@ -38,7 +38,7 @@ class StateMachine {
     //Set the current and last states as the initial one and enter it
     try {
       _currentState = states.singleWhere(
-        (State state) => state.id == initialStateId,
+        (ComposerState state) => state.id == initialStateId,
       );
     } catch (e) {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
@@ -48,14 +48,14 @@ class StateMachine {
   }
 
   ///This method executes a transition from the [currentState] to the
-  ///[next_state] parameter, but only if the transition is valid i.e. if the
+  ///[nextState] parameter, but only if the transition is valid i.e. if the
   ///[currentState] have [nextState] in its transitions list
   Future<void> transitionTo(String nextStateId) async {
     //try to get next state
-    State nextState;
+    ComposerState nextState;
     try {
       nextState = states.singleWhere(
-        (State state) => state.id == nextStateId,
+        (ComposerState ComposerState) =>ComposerState.id == nextStateId,
       );
     } catch (e) {
       throw InvalidState(from: currentState!.id, id: nextStateId);
@@ -82,7 +82,7 @@ class StateMachine {
 }
 
 ///A state for the [StateMachine]
-///To create a [State] the only required param is it's [id], other params may be:
+///To create a [ComposerState] the only required param is it's [id], other params may be:
 ///[onEnter]: a function that is executed on enter the state.
 ///[onLeave]: a function that is executed on leave the state
 ///i.e. when making a transition from state A to state B, state A will run its
@@ -90,7 +90,7 @@ class StateMachine {
 ///[transitions]: if your state can go to another one than it must have a
 ///[Transition] to this other state inside this list
 ///
-class State {
+class ComposerState {
   final String id;
   final Function onEnter;
   final Function onLeave;
@@ -98,7 +98,7 @@ class State {
   ///The list of [Transition]s that make up this [StateMachine]
   final List<Transition> transitions;
 
-  State({
+  ComposerState({
     required this.id,
     required this.onEnter,
     required this.onLeave,
@@ -114,7 +114,7 @@ class State {
   }
 }
 
-///This class represents the possible [Transition]s between [States]
+///This class represents the possible [Transition]s between [ComposerState]s
 ///from the state where this transition where instanciated [to] the next one
 class Transition {
   final String id;

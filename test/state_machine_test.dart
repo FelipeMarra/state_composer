@@ -1,4 +1,4 @@
-import 'package:state_composer/src/state_composer.dart';
+import 'package:state_composer/state_composer.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
           id: "machine1",
           initialStateId: "A",
           states: [
-            State(
+            ComposerState(
               id: "A",
               onEnter: () async {
                 print("Entered A");
@@ -26,7 +26,7 @@ void main() {
                 Transition(id: "A=>B", to: "B"),
               ],
             ),
-            State(
+            ComposerState(
               id: "B",
               onEnter: () {
                 print("Entered B");
@@ -42,11 +42,11 @@ void main() {
         );
       });
 
-      test("Initial State should be A", () {
+      test("Initial state should be A", () {
         expect(machine.currentState!.id, "A");
       });
 
-      test("Transition from A to B", () async{
+      test("Transition from A to B", () async {
         await machine.transitionTo("B");
         expect(machine.currentState!.id, "B");
       });

@@ -1,7 +1,7 @@
 name: state_composer
 version: 0.0.0
-description: Create state machines with object composition 
-homepage: https://github.com/FelipeMarra/state-composer
+description: Create ComposerState machines with object composition 
+homepage: https://github.com/FelipeMarra/state_composer
 
 environment:
     sdk: ">=2.16.1 <3.0.0"
