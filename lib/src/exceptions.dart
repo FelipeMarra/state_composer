@@ -1,3 +1,5 @@
+library state_composer.src.exceptions;
+
 class InvalidTransition implements Exception {
   String from;
   String to;
