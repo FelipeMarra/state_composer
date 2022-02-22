@@ -73,4 +73,4 @@ print(machine.currentState!.id) //B
 ```
 ## Generic State Types
 You can create personalized states that extends `ComposerState` and used them
-in you sate machine by doing StateMachine<MyStateType> when instantiating the machine 
+in you sate machine by doing StateMachine\<MyStateType> when instantiating the machine 
