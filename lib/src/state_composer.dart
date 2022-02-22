@@ -92,8 +92,15 @@ class StateMachine {
 ///[Transition] to this other state inside this list
 ///
 class ComposerState {
+  ///State's name. Must be unique
   final String id;
+
+  ///Function executed on enter the state.
+  ///Will give you access to the [lastState] and the [currentState]
   final Function(ComposerState? lastState, ComposerState currentState)? onEnter;
+
+  ///Function executed on leave the state.
+  ///Will give you access to the [currentState] and the [nextState]
   final Function(ComposerState currentState, ComposerState nextState)? onLeave;
 
   ///The list of [Transition]s that make up this [StateMachine]
@@ -106,6 +113,7 @@ class ComposerState {
     required this.transitions,
   });
 
+  ///The ids of the [transitions]
   List<String> transitionsDestines() {
     List<String> destines = [];
     for (Transition transition in transitions) {
