@@ -5,24 +5,24 @@ import 'package:state_composer/src/exceptions.dart';
 ///To create a state machine just instanciate this class passing the [id]
 ///and the [ComposerState]s that it will have, you also need to set
 ///what state will be the [initial] one
-class StateMachine {
+class StateMachine<StateType extends ComposerState>{
   ///[StateMachine]'s id, a name that identifies the machine
   final String id;
 
   ///The list of [ComposerState]s that make up this [StateMachine]
-  final List<ComposerState> states;
+  final List<StateType> states;
 
   ///The [ComposerState] id that will be automatically activated when the [StateMachine] is
   ///instantiated
   final String initialStateId;
 
   ///The [ComposerState] the [StateMachine] was in previously
-  ComposerState? _lastState;
-  ComposerState? get lastState => _lastState;
+  StateType? _lastState;
+  StateType? get lastState => _lastState;
 
   ///The [ComposerState] the [StateMachine] is currently in
-  ComposerState? _currentState;
-  ComposerState? get currentState => _currentState;
+  StateType? _currentState;
+  StateType? get currentState => _currentState;
 
   //TODO listen to state changes via status class => will also deliver [starded]
 
@@ -38,13 +38,13 @@ class StateMachine {
     //Set the current and last states as the initial one and enter it
     try {
       _currentState = states.singleWhere(
-        (ComposerState state) => state.id == initialStateId,
+        (StateType state) => state.id == initialStateId,
       );
     } catch (e) {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
     }
     _lastState = _currentState;
-    await _currentState?.onEnter!(null, _currentState!);
+    await _currentState?.onEnter!(null, currentState!);
   }
 
   ///This method executes a transition from the [currentState] to the
@@ -52,10 +52,10 @@ class StateMachine {
   ///[currentState] have [nextState] in its transitions list
   Future<void> transitionTo(String nextStateId) async {
     //try to get next state
-    ComposerState nextState;
+    StateType nextState;
     try {
       nextState = states.singleWhere(
-        (ComposerState ComposerState) => ComposerState.id == nextStateId,
+        (StateType composerState) => composerState.id == nextStateId,
       );
     } catch (e) {
       throw InvalidState(from: currentState!.id, id: nextStateId);
@@ -70,10 +70,10 @@ class StateMachine {
     }
 
     //leave last state
-    await _lastState?.onLeave!(_currentState!, nextState);
+    await _lastState?.onLeave!(currentState!, nextState);
 
     //Update last and current sates
-    ComposerState lastStateCopy = _lastState!.copyWith();
+    StateType lastStateCopy = _lastState!;
     _lastState = _currentState;
     _currentState = nextState;
 
@@ -120,20 +120,6 @@ class ComposerState {
       destines.add(transition.to);
     }
     return destines;
-  }
-
-  ComposerState copyWith({
-    String? id,
-    Function(ComposerState? lastState, ComposerState currentState)? onEnter,
-    Function(ComposerState currentState, ComposerState nextState)? onLeave,
-    List<Transition>? transitions,
-  }) {
-    return ComposerState(
-      id: id ?? this.id,
-      onEnter: onEnter ?? this.onEnter,
-      onLeave: onLeave ?? this.onLeave,
-      transitions: transitions ?? this.transitions,
-    );
   }
 }
 
