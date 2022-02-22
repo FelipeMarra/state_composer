@@ -44,7 +44,7 @@ class StateMachine {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
     }
     _lastState = _currentState;
-    await _currentState?.onEnter!();
+    await _currentState?.onEnter!(null, _currentState!);
   }
 
   ///This method executes a transition from the [currentState] to the
@@ -55,7 +55,7 @@ class StateMachine {
     ComposerState nextState;
     try {
       nextState = states.singleWhere(
-        (ComposerState ComposerState) =>ComposerState.id == nextStateId,
+        (ComposerState ComposerState) => ComposerState.id == nextStateId,
       );
     } catch (e) {
       throw InvalidState(from: currentState!.id, id: nextStateId);
@@ -70,14 +70,15 @@ class StateMachine {
     }
 
     //leave last state
-    await _lastState?.onLeave!();
+    await _lastState?.onLeave!(_currentState!, nextState);
 
     //Update last and current sates
+    ComposerState lastStateCopy = _lastState!.copyWith();
     _lastState = _currentState;
     _currentState = nextState;
 
     //enter next sate
-    await nextState.onEnter!();
+    await nextState.onEnter!(lastStateCopy, currentState!);
   }
 }
 
@@ -92,8 +93,8 @@ class StateMachine {
 ///
 class ComposerState {
   final String id;
-  final Function? onEnter;
-  final Function? onLeave;
+  final Function(ComposerState? lastState, ComposerState currentState)? onEnter;
+  final Function(ComposerState currentState, ComposerState nextState)? onLeave;
 
   ///The list of [Transition]s that make up this [StateMachine]
   final List<Transition> transitions;
@@ -111,6 +112,20 @@ class ComposerState {
       destines.add(transition.to);
     }
     return destines;
+  }
+
+  ComposerState copyWith({
+    String? id,
+    Function(ComposerState? lastState, ComposerState currentState)? onEnter,
+    Function(ComposerState currentState, ComposerState nextState)? onLeave,
+    List<Transition>? transitions,
+  }) {
+    return ComposerState(
+      id: id ?? this.id,
+      onEnter: onEnter ?? this.onEnter,
+      onLeave: onLeave ?? this.onLeave,
+      transitions: transitions ?? this.transitions,
+    );
   }
 }
 
