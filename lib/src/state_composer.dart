@@ -90,7 +90,7 @@ class StateMachine<StateType extends ComposerState> {
 ///[transitions]: if your state can go to another one than it must have a
 ///[Transition] to this other state inside this list
 ///
-class ComposerState {
+class ComposerState<TransitionType extends Transition>{
   ///State's name. Must be unique
   final String id;
 
@@ -103,7 +103,7 @@ class ComposerState {
   final Function(StateMachine stateMachine, ComposerState nextState)? onLeave;
 
   ///The list of [Transition]s that make up this [StateMachine]
-  final List<Transition> transitions;
+  final List<TransitionType> transitions;
 
   ComposerState({
     required this.id,
@@ -115,7 +115,7 @@ class ComposerState {
   ///The ids of the [transitions]
   List<String> transitionsDestines() {
     List<String> destines = [];
-    for (Transition transition in transitions) {
+    for (TransitionType transition in transitions) {
       destines.add(transition.to);
     }
     return destines;
