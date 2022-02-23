@@ -13,19 +13,19 @@ void main() {
         states: [
           ComposerState(
             id: "A",
-            onEnter: (lastState, currentState) async {
+            onEnter: (stateMachine) async {
               test("onEnter A Last State Should be Null", () {
-                expect(lastState, null);
+                expect(stateMachine.lastState, null);
               });
               test("onEnter A Current State ID Should be A", () {
-                expect(currentState.id, "A");
+                expect(stateMachine.currentState!.id, "A");
               });
               print("Entered A");
             },
-            onLeave: (currentState, nextState) async {
+            onLeave: (stateMachine, nextState) async {
               print("Leaving A");
 
-              expect(currentState.id, "A");
+              expect(stateMachine.currentState!.id, "A");
               expect(nextState.id, "B");
 
               await Future.delayed(Duration(seconds: 3));
@@ -37,11 +37,11 @@ void main() {
           ),
           ComposerState(
             id: "B",
-            onEnter: (lastSate, currentState) {
+            onEnter: (stateMachine) {
               print("Entered B");
 
-              expect(lastSate!.id, "A");
-              expect(currentState.id, "B");
+              expect(stateMachine.lastState!.id, "A");
+              expect(stateMachine.currentState!.id, "B");
             },
             onLeave: (currentState, nextState) {
               print("leaving B");

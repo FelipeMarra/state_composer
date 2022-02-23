@@ -5,7 +5,7 @@ import 'package:state_composer/src/exceptions.dart';
 ///To create a state machine just instanciate this class passing the [id]
 ///and the [ComposerState]s that it will have, you also need to set
 ///what state will be the [initial] one
-class StateMachine<StateType extends ComposerState>{
+class StateMachine<StateType extends ComposerState> {
   ///[StateMachine]'s id, a name that identifies the machine
   final String id;
 
@@ -43,8 +43,8 @@ class StateMachine<StateType extends ComposerState>{
     } catch (e) {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
     }
-    _lastState = _currentState;
-    await _currentState?.onEnter!(null, currentState!);
+
+    await _currentState?.onEnter!(this);
   }
 
   ///This method executes a transition from the [currentState] to the
@@ -70,15 +70,14 @@ class StateMachine<StateType extends ComposerState>{
     }
 
     //leave last state
-    await _lastState?.onLeave!(currentState!, nextState);
+    await _lastState?.onLeave!(this, nextState);
 
     //Update last and current sates
-    StateType lastStateCopy = _lastState!;
     _lastState = _currentState;
     _currentState = nextState;
 
     //enter next sate
-    await nextState.onEnter!(lastStateCopy, currentState!);
+    await nextState.onEnter!(this);
   }
 }
 
@@ -97,11 +96,11 @@ class ComposerState {
 
   ///Function executed on enter the state.
   ///Will give you access to the [lastState] and the [currentState]
-  final Function(ComposerState? lastState, ComposerState currentState)? onEnter;
+  final Function(StateMachine stateMachine)? onEnter;
 
   ///Function executed on leave the state.
   ///Will give you access to the [currentState] and the [nextState]
-  final Function(ComposerState currentState, ComposerState nextState)? onLeave;
+  final Function(StateMachine stateMachine, ComposerState nextState)? onLeave;
 
   ///The list of [Transition]s that make up this [StateMachine]
   final List<Transition> transitions;
