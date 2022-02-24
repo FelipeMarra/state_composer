@@ -13,54 +13,54 @@ Ps: those functions accept futures<br>
 All transitions that a state is allowed to make must be inside the transitions list. A `Transition` also receives an id, 
 and the id of the state that you want to go to
 ``` dart
-      machine = StateMachine(
-        id: "machine1",
-        initialStateId: "A",
-        states: [
-          ComposerState(
-            id: "A",
-            onEnter: (stateMachine) async {
-              test("onEnter A Last State Should be Null", () {
-                expect(stateMachine.lastState, null);
-              });
-              test("onEnter A Current State ID Should be A", () {
-                expect(stateMachine.currentState!.id, "A");
-              });
-              print("Entered A");
-            },
-            onLeave: (stateMachine, nextState) async {
-              print("Leaving A");
+machine = StateMachine(
+  id: "machine1",
+  initialStateId: "A",
+  states: [
+    ComposerState(
+      id: "A",
+      onEnter: (stateMachine) async {
+        test("onEnter A Last State Should be Null", () {
+          expect(stateMachine.lastState, null);
+        });
+        test("onEnter A Current State ID Should be A", () {
+          expect(stateMachine.currentState!.id, "A");
+        });
+        print("Entered A");
+      },
+      onLeave: (stateMachine, nextState) async {
+        print("Leaving A");
 
-              expect(stateMachine.currentState!.id, "A");
-              expect(nextState.id, "B");
+        expect(stateMachine.currentState!.id, "A");
+        expect(nextState.id, "B");
 
-              await Future.delayed(Duration(seconds: 3));
-              print("Leaving A future completed");
-            },
-            transitions: [
-              Transition(id: "A=>B", to: "B"),
-            ],
-          ),
-          ComposerState(
-            id: "B",
-            onEnter: (stateMachine) {
-              print("Entered B");
+        await Future.delayed(Duration(seconds: 3));
+        print("Leaving A future completed");
+      },
+      transitions: [
+        Transition(id: "A=>B", to: "B"),
+      ],
+    ),
+    ComposerState(
+      id: "B",
+      onEnter: (stateMachine) {
+        print("Entered B");
 
-              expect(stateMachine.lastState!.id, "A");
-              expect(stateMachine.currentState!.id, "B");
-            },
-            onLeave: (currentState, nextState) {
-              print("leaving B");
+        expect(stateMachine.lastState!.id, "A");
+        expect(stateMachine.currentState!.id, "B");
+      },
+      onLeave: (currentState, nextState) {
+        print("leaving B");
 
-              expect(currentState.id, "B");
-              expect(nextState.id, "A");
-            },
-            transitions: [
-              Transition(id: "B=>A", to: "A"),
-            ],
-          )
-        ],
-      );
+        expect(currentState.id, "B");
+        expect(nextState.id, "A");
+      },
+      transitions: [
+        Transition(id: "B=>A", to: "A"),
+      ],
+    )
+  ],
+);
 ```
 ## Transitioning between states
 ```dart
@@ -74,3 +74,28 @@ print(machine.currentState!.id) //B
 ## Generic State Types
 You can create personalized states that extends `ComposerState` and used them
 in you sate machine by doing StateMachine\<MyStateType> when instantiating the machine 
+
+## Listening to State Changes
+Use the state machines' `stateStream` to listen the state changes
+```dart
+test("Stream Listening", () async {
+  int counter = 0;
+  machine.stateStream.listen((currentState) async {
+    switch (counter) {
+      case 0:
+        expect(currentState.id, "A");
+        machine.transitionTo("B");
+        counter++;
+        break;
+      case 1:
+        expect(currentState.id, "B");
+        machine.transitionTo("A");
+        counter++;
+        break;
+      case 2:
+        expect(currentState.id, "A");
+        break;
+    }
+  });
+});
+```

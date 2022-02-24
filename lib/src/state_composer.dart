@@ -1,5 +1,7 @@
 library state_composer.src.state_composer;
 
+import 'dart:async';
+
 import 'package:state_composer/src/exceptions.dart';
 
 ///To create a state machine just instanciate this class passing the [id]
@@ -16,15 +18,18 @@ class StateMachine<StateType extends ComposerState> {
   ///instantiated
   final String initialStateId;
 
-  ///The [ComposerState] the [StateMachine] was in previously
   StateType? _lastState;
+  ///The [ComposerState] the [StateMachine] was in previously
   StateType? get lastState => _lastState;
 
-  ///The [ComposerState] the [StateMachine] is currently in
   StateType? _currentState;
+  ///The [ComposerState] the [StateMachine] is currently in
   StateType? get currentState => _currentState;
 
-  //TODO listen to state changes via status class => will also deliver [starded]
+  StreamController<StateType> _stateStreamController =
+      StreamController<StateType>.broadcast();
+  ///Strem updated every time [currenteState] is updated
+  Stream<StateType> get stateStream => _stateStreamController.stream;
 
   StateMachine({
     required this.id,
@@ -35,7 +40,7 @@ class StateMachine<StateType extends ComposerState> {
   }
 
   Future<void> _start() async {
-    //Set the current and last states as the initial one and enter it
+    //Set the current and last states as the initial one
     try {
       _currentState = states.singleWhere(
         (StateType state) => state.id == initialStateId,
@@ -44,6 +49,8 @@ class StateMachine<StateType extends ComposerState> {
       throw InvalidState(from: currentState?.id ?? "None", id: initialStateId);
     }
 
+    //add to stream and enter the state
+    _stateStreamController.add(_currentState!);
     await _currentState?.onEnter!(this);
   }
 
@@ -69,12 +76,14 @@ class StateMachine<StateType extends ComposerState> {
       );
     }
 
-    //leave last state
-    await _lastState?.onLeave!(this, nextState);
+    //leave current state
+    await _currentState?.onLeave!(this, nextState);
 
-    //Update last and current sates
+    //Update last and current sates and add to stream
     _lastState = _currentState;
     _currentState = nextState;
+
+    _stateStreamController.add(_currentState!);
 
     //enter next sate
     await nextState.onEnter!(this);
@@ -90,7 +99,7 @@ class StateMachine<StateType extends ComposerState> {
 ///[transitions]: if your state can go to another one than it must have a
 ///[Transition] to this other state inside this list
 ///
-class ComposerState<TransitionType extends Transition>{
+class ComposerState<TransitionType extends Transition> {
   ///State's name. Must be unique
   final String id;
 
