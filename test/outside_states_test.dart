@@ -6,6 +6,7 @@ void main() {
     "Outside The States Tests Using Stream",
     () {
       late StateMachine machine;
+      late bool firstTime = true;
 
       setUp(() {
         machine = StateMachine(
@@ -16,13 +17,18 @@ void main() {
               id: "A",
               onEnter: (stateMachine) async {
                 print("Entered A");
-              },
-              onLeave: (stateMachine, nextState) async {
-                print("Leaving A");
 
                 await Future.delayed(Duration(seconds: 3));
 
-                print("Leaving A future completed");
+                print("Enter A future completed");
+
+                if (firstTime) {
+                  stateMachine.transitionTo("B");
+                  firstTime = false;
+                }
+              },
+              onLeave: (stateMachine, nextState) async {
+                print("Leaving A");
               },
               transitions: [
                 Transition(id: "A=>B", to: "B"),
@@ -30,8 +36,14 @@ void main() {
             ),
             ComposerState(
               id: "B",
-              onEnter: (stateMachine) {
+              onEnter: (stateMachine) async {
                 print("Entered B");
+
+                await Future.delayed(Duration(seconds: 3));
+
+                print("Enter A future completed");
+
+                stateMachine.transitionTo("A");
               },
               onLeave: (currentState, nextState) {
                 print("leaving B");
@@ -45,24 +57,10 @@ void main() {
       });
 
       test("Stream Listening", () async {
-        int counter = 0;
-        machine.stateStream.listen((currentState) async {
-          switch (counter) {
-            case 0:
-              expect(currentState.id, "A");
-              await machine.transitionTo("B");
-              counter++;
-              break;
-            case 1:
-              expect(currentState.id, "B");
-              await machine.transitionTo("A");
-              counter++;
-              break;
-            case 2:
-              expect(currentState.id, "A");
-              break;
-          }
-        });
+        await expectLater(
+          machine.stateStream.map((event) => event.id),
+          emitsInOrder(["A", "B", "A"]),
+        );
       });
     },
   );

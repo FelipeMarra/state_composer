@@ -19,23 +19,29 @@ class StateMachine<StateType extends ComposerState> {
   final String initialStateId;
 
   StateType? _lastState;
+
   ///The [ComposerState] the [StateMachine] was in previously
   StateType? get lastState => _lastState;
 
   StateType? _currentState;
+
   ///The [ComposerState] the [StateMachine] is currently in
   StateType? get currentState => _currentState;
 
-  StreamController<StateType> _stateStreamController =
-      StreamController<StateType>.broadcast();
+  final StreamController<StateType> _stateStreamController =
+      StreamController<StateType>();
+
+  late Stream<StateType> _stateStream;
+
   ///Strem updated every time [currenteState] is updated
-  Stream<StateType> get stateStream => _stateStreamController.stream;
+  Stream<StateType> get stateStream => _stateStream;
 
   StateMachine({
     required this.id,
     required this.states,
     required this.initialStateId,
   }) {
+    _stateStream = _stateStreamController.stream.asBroadcastStream();
     _start();
   }
 
@@ -50,7 +56,7 @@ class StateMachine<StateType extends ComposerState> {
     }
 
     //add to stream and enter the state
-    _stateStreamController.add(_currentState!);
+    _stateStreamController.sink.add(_currentState!);
     await _currentState?.onEnter!(this);
   }
 
@@ -83,7 +89,7 @@ class StateMachine<StateType extends ComposerState> {
     _lastState = _currentState;
     _currentState = nextState;
 
-    _stateStreamController.add(_currentState!);
+    _stateStreamController.sink.add(_currentState!);
 
     //enter next sate
     await nextState.onEnter!(this);
