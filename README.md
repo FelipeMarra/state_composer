@@ -71,9 +71,10 @@ await machine.transitionTo("B");
 //Entered B
 print(machine.currentState!.id) //B
 ```
-## Generic State Types
-You can create personalized states that extends `ComposerState` and used them
-in you sate machine by doing StateMachine\<MyStateType> when instantiating the machine 
+## Generic State and Transition Types
+You can create personalized states and transitions that extends `ComposerState` and `Transition`. To see an
+example look at <a href="https://github.com/FelipeMarra/flutter_chat_composer/blob/main/lib/models/chat_bot_models.dart"> flutter_chat_composer's model <a>
+that extends state_composer to create a chatbot based on state machines
 
 ## Listening to State Changes
 Use the state machines' `stateStream` to listen the state changes
