@@ -79,24 +79,7 @@ that extends state_composer to create a chatbot based on state machines
 ## Listening to State Changes
 Use the state machines' `stateStream` to listen the state changes
 ```dart
-test("Stream Listening", () async {
-  int counter = 0;
-  machine.stateStream.listen((currentState) async {
-    switch (counter) {
-      case 0:
-        expect(currentState.id, "A");
-        machine.transitionTo("B");
-        counter++;
-        break;
-      case 1:
-        expect(currentState.id, "B");
-        machine.transitionTo("A");
-        counter++;
-        break;
-      case 2:
-        expect(currentState.id, "A");
-        break;
-    }
-  });
+machine.stateStream.listen((currentState) {
+  print("State Changed to ${currentState.id}");
 });
 ```
