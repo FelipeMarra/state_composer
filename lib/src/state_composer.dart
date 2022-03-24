@@ -11,6 +11,9 @@ class StateMachine<StateType extends ComposerState> {
   ///[StateMachine]'s id, a name that identifies the machine
   final String id;
 
+  ///If just showing a history of states you dont need to run transitions
+  final bool historyMode = false;
+
   ///The list of [ComposerState]s that make up this [StateMachine]
   final List<StateType> states;
 
@@ -42,7 +45,9 @@ class StateMachine<StateType extends ComposerState> {
     required this.initialStateId,
   }) {
     _stateStream = _stateStreamController.stream.asBroadcastStream();
-    _start();
+    if (historyMode == false) {
+      _start();
+    }
   }
 
   ///Initialize the [StateMachine] entering into the initial state
