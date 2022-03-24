@@ -45,8 +45,9 @@ class StateMachine<StateType extends ComposerState> {
     _start();
   }
 
+  ///Initialize the [StateMachine] entering into the initial state
   Future<void> _start() async {
-    //Set the current and last states as the initial one
+    //Set the current states as the initial one
     try {
       _currentState = states.singleWhere(
         (StateType state) => state.id == initialStateId,
