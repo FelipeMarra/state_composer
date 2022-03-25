@@ -12,7 +12,7 @@ class StateMachine<StateType extends ComposerState> {
   final String id;
 
   ///If just showing a history of states you dont need to run transitions
-  final bool historyMode = false;
+  bool historyMode;
 
   ///The list of [ComposerState]s that make up this [StateMachine]
   final List<StateType> states;
@@ -43,10 +43,15 @@ class StateMachine<StateType extends ComposerState> {
     required this.id,
     required this.states,
     required this.initialStateId,
+    this.historyMode = false,
   }) {
     _stateStream = _stateStreamController.stream.asBroadcastStream();
     if (historyMode == false) {
       _start();
+    } else {
+      for (StateType state in states) {
+        _stateStreamController.sink.add(state);
+      }
     }
   }
 
