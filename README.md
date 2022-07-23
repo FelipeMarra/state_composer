@@ -3,7 +3,7 @@
 >Next steps are to add parallel states and transition guards
 
 ## Usage
-### A simple machine with to states
+### Example of a simple machine with two states
 Instanciate your `StateMachine` passing its id, i.e. a unique name, the inintial state id and a list of states <br>
 Each `ComposerState` also have an id that can really be whatever you want to call it, as long as there is no other state with this name <br>
 States execute stuff through `onEnter` and `onLeave` functions. <br>
