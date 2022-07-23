@@ -1,6 +1,6 @@
 # State Composer
 >Create state machines in dart using object composition <br>
->This package is under development. For now only suports simple transitions between states. Next steps are add listeners and parallel states
+>Next step is to add parallel states
 
 ## Usage
 ### A simple machine with to states
